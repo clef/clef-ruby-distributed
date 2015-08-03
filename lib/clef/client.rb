@@ -1,0 +1,103 @@
+require 'base64'
+require 'json'
+
+module Clef
+  class Client
+    attr_reader :config
+
+    SHA256 = OpenSSL::Digest::SHA256
+    RSA = OpenSSL::PKey::RSA
+
+    def initialize(config=Clef.config.dup, options={})
+      @config = config
+    end
+
+    def sign_payload(payload={})
+      payload = symoblize_keys(payload)
+
+      assert_keys_in_payload!(payload)
+
+      payload[:application_id] = @config.id
+      payload[:timestamp] = (Time.now.to_f * 1000).to_i
+
+      payload_json = sort_hash(payload).to_json
+      payload_hash = SHA256.new.update(payload_json).hexdigest
+      payload_signature = @config.keypair.sign(SHA256.new, payload_json)
+
+      sort_hash({
+        payload_json: payload_json,
+        payload_hash: payload_hash,
+        signatures: {
+          application: {
+            signature: Base64.strict_encode64(payload_signature),
+            type: 'rsa-sha256'
+          }
+        }
+      })
+    end
+
+    def verify_payload!(payload, user_public_key)
+      unless user_public_key.is_a?(RSA)
+        user_public_key = RSA.new(user_public_key)
+      end
+
+      payload_hash = SHA256.new.update(payload[:payload_json])
+      hash_is_valid = payload_hash.present? and payload[:payload_hash].present? and payload_hash == payload[:payload_hash]
+
+      unless hash_is_valid
+        raise Errors::VerificationError, "Invalid payload hash."
+      end
+
+      application_signature_is_valid = @config.keypair.verify(
+        SHA256.new,
+        Base64.strict_decode64(payload[:signatures][:application][:signature]),
+        payload[:payload_json]
+      )
+
+      unless application_signature_is_valid
+        raise Errors::VerificationError, "Invalid application signature."
+      end
+
+      user_signature_is_valid = user_public_key.verify(
+        SHA256.new,
+        Base64.strict_decode64(payload[:signatures][:user][:signature]),
+        payload[:payload_json]
+      )
+
+      unless user_signature_is_valid
+        raise Errors::VerificationError, "Invalid user signature."
+      end
+
+      true
+    end
+
+    def encode_payload(payload)
+      Base64.urlsafe_encode64(payload.to_json)
+    end
+
+    def decode_payload(payload)
+      JSON.parse Base64.urlsafe_decode64(payload), symbolize_names: true
+    end
+
+    private
+
+    def assert_keys_in_payload!(payload)
+      [:clef_id, :nonce, :redirect_url, :session_id, :type].map do |key|
+        raise Errors::InvalidPayloadError, "Missing #{key} in payload" if payload[key].nil?
+      end
+    end
+
+    def symoblize_keys(hash)
+      hash.inject({}) { | memo, (k, v) | memo[k.to_sym] = v; memo}
+    end
+
+    def sort_hash(h)
+      {}.tap do |h2|
+        h.sort.each do |k,v|
+          h2[k] = v.is_a?(Hash) ? sort_hash(v) : v
+        end
+      end
+    end
+
+  end
+end
