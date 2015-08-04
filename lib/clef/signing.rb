@@ -5,11 +5,7 @@ module Clef
   SHA256 = OpenSSL::Digest::SHA256
   RSA = OpenSSL::PKey::RSA
 
-  class Signer
-    def initialize(config)
-      @config = config
-    end
-
+  module Signing
     def sign_login_payload(payload={})
       payload[:type] = "login"
       assert_keys_in_payload!(payload, [:clef_id, :nonce, :redirect_url, :session_id, :type])

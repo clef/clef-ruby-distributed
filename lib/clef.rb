@@ -3,13 +3,12 @@ require 'active_support/core_ext'
 
 require 'clef/errors'
 require 'clef/configuration'
-require 'clef/signer'
+require 'clef/requests'
+require 'clef/signing'
 require 'clef/client'
 
 module Clef
   extend self
-
-  API_BASE = 'https://clef.io'.freeze
 
   def configure
     yield(config)
@@ -28,5 +27,6 @@ module Clef
   end
 
   delegate(*Configuration.public_instance_methods(false), to: :config)
+  delegate(*Signing.public_instance_methods(false), to: :client)
   delegate(*Client.public_instance_methods(false) - [:config], to: :client)
 end

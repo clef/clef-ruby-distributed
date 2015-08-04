@@ -3,14 +3,24 @@ require 'json'
 
 module Clef
   class Client
-    attr_reader :config
+    include Clef::Signing
+    include Clef::Requests
+
+    attr_accessor :config
 
     def initialize(config=Clef.config.dup, options={})
       @config = config
     end
 
-    def signer
-      @signer ||= Clef::Signer.new(@config)
+    def get_reactivation_data(token)
+      payload = { reactivation_token: token }
+      signed_payload = sign_reactivation_handshake_payload(payload)
+
+      get(
+        "reactivations/#{token}/",
+        {},
+        {"Authorization" => "Payload #{Clef.encode_payload(signed_payload)}"}
+      ).body
     end
 
     def encode_payload(payload)
@@ -20,7 +30,5 @@ module Clef
     def decode_payload(payload)
       JSON.parse Base64.urlsafe_decode64(payload), symbolize_names: true
     end
-
-    delegate(*Clef::Signer.public_instance_methods(false), to: :signer)
   end
 end

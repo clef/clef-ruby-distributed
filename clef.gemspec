@@ -17,9 +17,13 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_dependency "httparty", "~> 0.13.5"
+  s.add_dependency "faraday", "~> 0.9.0"
+  s.add_dependency "faraday_middleware", "~> 0.10.0"
   s.add_dependency 'activesupport', '~> 3.2.12'
+
 
   s.add_development_dependency "bundler"
   s.add_development_dependency "rspec"
+  s.add_development_dependency "vcr", "~> 2.9.3"
+  s.add_development_dependency "webmock", "~> 1.21.0"
 end
