@@ -15,12 +15,7 @@ module Clef
     def get_reactivation_data(token)
       payload = { reactivation_token: token }
       signed_payload = sign_reactivation_handshake_payload(payload)
-
-      get(
-        "reactivations/#{token}/",
-        {},
-        {"Authorization" => "Payload #{Clef.encode_payload(signed_payload)}"}
-      ).body
+      get("reactivations/#{token}/", {}, {"Authorization" => "Payload #{Clef.encode_payload(signed_payload)}"} ).body
     end
 
     def encode_payload(payload)
