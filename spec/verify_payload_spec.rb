@@ -38,7 +38,7 @@ RSpec.describe Clef, '#verify_payload!' do
     expect(Clef.verify_payload!(payload, @user_key)).to be(true)
   end
   it 'should raise an exception if the hash is invalid' do
-    allow(Clef.client).to receive(:assert_signatures_present!).and_return(true)
+    allow(Clef.client.signer).to receive(:assert_signatures_present!).and_return(true)
 
     payload_json = { a: 1 }.to_json
     payload_hash = "badhash"
@@ -55,7 +55,7 @@ RSpec.describe Clef, '#verify_payload!' do
   end
 
   it 'should raise an exception if the application signature is invalid' do
-    allow(Clef.client).to receive(:assert_signatures_present!).and_return(true)
+    allow(Clef.client.signer).to receive(:assert_signatures_present!).and_return(true)
 
     payload_json = { a: 1 }.to_json
     payload_hash = SHA.new.update(payload_json).hexdigest
@@ -77,7 +77,7 @@ RSpec.describe Clef, '#verify_payload!' do
   end
 
   it 'should raise an exception if the application signature is invalid' do
-    allow(Clef.client).to receive(:assert_signatures_present!).and_return(true)
+    allow(Clef.client.signer).to receive(:assert_signatures_present!).and_return(true)
     allow(Clef.config.keypair).to receive(:verify).and_return(true)
     allow(@user_key).to receive(:verify).and_return(false)
 

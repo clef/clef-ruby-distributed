@@ -3,6 +3,7 @@ require 'active_support/core_ext'
 
 require 'clef/errors'
 require 'clef/configuration'
+require 'clef/signer'
 require 'clef/client'
 
 module Clef
