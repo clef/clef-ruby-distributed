@@ -16,9 +16,7 @@ module Clef
       payload = symoblize_keys(payload)
 
       assert_keys_in_payload!(payload)
-
-      payload[:application_id] = @config.id
-      payload[:timestamp] = (Time.now.to_f * 1000).to_i
+      add_keys_to_payload!(payload)
 
       payload_json = sort_hash(payload).to_json
       payload_hash = SHA256.new.update(payload_json).hexdigest
@@ -41,8 +39,10 @@ module Clef
         user_public_key = RSA.new(user_public_key)
       end
 
-      payload_hash = SHA256.new.update(payload[:payload_json])
-      hash_is_valid = payload_hash.present? and payload[:payload_hash].present? and payload_hash == payload[:payload_hash]
+      assert_signatures_present!(payload)
+
+      payload_hash = SHA256.new.update(payload[:payload_json]).hexdigest
+      hash_is_valid = (payload_hash.present? and payload[:payload_hash].present? and payload_hash == payload[:payload_hash])
 
       unless hash_is_valid
         raise Errors::VerificationError, "Invalid payload hash."
@@ -81,9 +81,28 @@ module Clef
 
     private
 
+    def add_keys_to_payload!(payload)
+      payload[:application_id] = @config.id
+      payload[:timestamp] = (Time.now.to_f * 1000).to_i
+    end
+
     def assert_keys_in_payload!(payload)
       [:clef_id, :nonce, :redirect_url, :session_id, :type].map do |key|
-        raise Errors::InvalidPayloadError, "Missing #{key} in payload" if payload[key].nil?
+        raise Errors::InvalidPayloadError, "Missing #{key} in payload." if payload[key].nil?
+      end
+    end
+
+    def assert_signatures_present!(payload)
+      unless payload[:signatures].present?
+        raise Errors::VerificationError, "No signatures provided"
+      end
+
+      unless payload[:signatures][:application].present? and payload[:signatures][:application][:signature].present?
+        raise Errors::VerificationError, "No application signature provided"
+      end
+
+      unless payload[:signatures][:user].present? and payload[:signatures][:user][:signature].present?
+        raise Errors::VerificationError, "No user signature provided"
       end
     end
 

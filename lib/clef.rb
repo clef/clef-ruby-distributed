@@ -1,3 +1,6 @@
+require 'active_support'
+require 'active_support/core_ext'
+
 require 'clef/errors'
 require 'clef/configuration'
 require 'clef/client'

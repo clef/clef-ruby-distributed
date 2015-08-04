@@ -17,5 +17,9 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
 
-  s.add_development_dependency "bundler", ">= 1.0.0"
+  s.add_dependency "httparty", "~> 0.13.5"
+  s.add_dependency 'activesupport', '~> 3.2.12'
+
+  s.add_development_dependency "bundler"
+  s.add_development_dependency "rspec"
 end
