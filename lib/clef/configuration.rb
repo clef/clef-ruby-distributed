@@ -11,12 +11,18 @@ module Clef
     attr_accessor :http_open_timeout
     attr_accessor :http_read_timeout
 
+    attr_accessor :initiation_public_key
+    attr_accessor :confirmation_public_key
+
 
     def initialize
       @api_base = 'https://clef.io'
       @api_version = 'v1'
       @http_open_timeout = 2
       @http_read_timeout = 5
+
+      @initiation_public_key = OpenSSL::PKey::RSA.new File.read(File.join(File.dirname(__FILE__), '..', '..', 'resources', 'keys', 'initiation.pem'))
+      @confirmation_public_key = OpenSSL::PKey::RSA.new File.read(File.join(File.dirname(__FILE__), '..', '..', 'resources', 'keys', 'confirmation.pem'))
     end
 
     def keypair
@@ -41,5 +47,7 @@ module Clef
         @raw_keypair = value
       end
     end
+
+    private
   end
 end

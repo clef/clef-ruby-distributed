@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'base64'
 
-RSpec.describe Clef, '#verify_payload!' do
+RSpec.describe Clef, '#verify_user_payload!' do
 
   SHA = OpenSSL::Digest::SHA256
 
@@ -29,7 +29,7 @@ RSpec.describe Clef, '#verify_payload!' do
       }
     }
 
-    expect(Clef.verify_payload!(payload, @user_key)).to be(true)
+    expect(Clef.verify_user_payload!(payload, @user_key)).to be(true)
   end
   it 'should raise an exception if the hash is invalid' do
     allow(Clef.client).to receive(:assert_signatures_present!).and_return(true)
@@ -38,7 +38,7 @@ RSpec.describe Clef, '#verify_payload!' do
     payload_hash = "badhash"
 
     expect {
-      Clef.verify_payload!(
+      Clef.verify_user_payload!(
         {
           payload_json: payload_json,
           payload_hash: payload_hash
@@ -55,7 +55,7 @@ RSpec.describe Clef, '#verify_payload!' do
     payload_hash = SHA.new.update(payload_json).hexdigest
 
     expect {
-      Clef.verify_payload!(
+      Clef.verify_user_payload!(
         {
           payload_json: payload_json,
           payload_hash: payload_hash,
@@ -79,7 +79,7 @@ RSpec.describe Clef, '#verify_payload!' do
     payload_hash = SHA.new.update(payload_json).hexdigest
 
     expect {
-      Clef.verify_payload!(
+      Clef.verify_user_payload!(
         {
           payload_json: payload_json,
           payload_hash: payload_hash,
@@ -103,7 +103,7 @@ RSpec.describe Clef, '#verify_payload!' do
       payload_hash = SHA.new.update(payload_json).hexdigest
 
       expect {
-        Clef.verify_payload!(
+        Clef.verify_user_payload!(
           {
             payload_json: payload_json,
             payload_hash: payload_hash
@@ -118,7 +118,7 @@ RSpec.describe Clef, '#verify_payload!' do
       payload_hash = SHA.new.update(payload_json).hexdigest
 
       expect {
-        Clef.verify_payload!(
+        Clef.verify_user_payload!(
           {
             payload_json: payload_json,
             payload_hash: payload_hash,
@@ -132,7 +132,7 @@ RSpec.describe Clef, '#verify_payload!' do
       }.to raise_error(Clef::Errors::VerificationError, "No application signature provided")
 
       expect {
-        Clef.verify_payload!(
+        Clef.verify_user_payload!(
           {
             payload_json: payload_json,
             payload_hash: payload_hash,
@@ -154,7 +154,7 @@ RSpec.describe Clef, '#verify_payload!' do
       payload_hash = SHA.new.update(payload_json).hexdigest
 
       expect {
-        Clef.verify_payload!(
+        Clef.verify_user_payload!(
           {
             payload_json: payload_json,
             payload_hash: payload_hash,
@@ -170,7 +170,7 @@ RSpec.describe Clef, '#verify_payload!' do
       }.to raise_error(Clef::Errors::VerificationError, "No user signature provided")
 
       expect {
-        Clef.verify_payload!(
+        Clef.verify_user_payload!(
           {
             payload_json: payload_json,
             payload_hash: payload_hash,

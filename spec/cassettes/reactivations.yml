@@ -1,0 +1,50 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://clef.io/api/v1/reactivations/123456/
+    body:
+      encoding: UTF-8
+      string: ""
+    headers:
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Content-Type:
+      - application/json;charset=utf-8
+      Content-Length:
+      - "2151"
+    body:
+      encoding: UTF-8
+      string: "{\"payload_hash\":\"bbcf83f90fd259fa3ad53eb2d99d0c46578a017c537e29ec1d9726a2225a2cd5\",\"payload_json\":\"{\\\"public_keys\\\": {\\\"public_keys\\\": {\\\"current\\\": {\\\"type\\\": \\\"rsa\\\", \\\"bundle\\\": \\\"-----BEGIN PUBLIC KEY-----\\\\nMIIBIDANBgkqhkiG9w0BAQEFAAOCAQ0AMIIBCAKCAQEA8BwwnqEA1R4JER2MObK4\\\\n6m0Eoq6hl/JbbtaKSi37eKkTWz55QPz6PQ+m1jeBKEznTsj0vrbvuoZ6o05LR8N5\\\\nLgFsz2ss4GNS8Me7et0O1nyQi91azHPdhOyaKx1KJhUk+L4Jgd+FN38PQF2XRy9X\\\\nj0zc4WGVum7A4mZoj19eqTiP3WOwQL+/FutlypNsp6Qdj5o8gzMS3Vdp7PWhA4ml\\\\nSCLCAZ48zqpffAJihj1tSziA9X2O0e7mm59r8qXNJ6cmEzHGcK2bYi68J+Zbd/6Q\\\\nqUUzQ+5H/2zzDWVxVWROHRL2pqZv80Ysil8ZZA1fxGnYqupeJQ/d6bGSEOLmwT3k\\\\nYwIBIw==\\\\n-----END PUBLIC KEY-----\\\", \\\"fingerprint\\\": \\\"2c146010c5c2da25d4367d18be464ddc65d8bed9\\\"}}, \\\"previous\\\": {\\\"type\\\": \\\"rsa\\\", \\\"bundle\\\": \\\"-----BEGIN PUBLIC KEY-----\\\\nMIIBIDANBgkqhkiG9w0BAQEFAAOCAQ0AMIIBCAKCAQEA8BwwnqEA1R4JER2MObK4\\\\n6m0Eoq6hl/JbbtaKSi37eKkTWz55QPz6PQ+m1jeBKEznTsj0vrbvuoZ6o05LR8N5\\\\nLgFsz2ss4GNS8Me7et0O1nyQi91azHPdhOyaKx1KJhUk+L4Jgd+FN38PQF2XRy9X\\\\nj0zc4WGVum7A4mZoj19eqTiP3WOwQL+/FutlypNsp6Qdj5o8gzMS3Vdp7PWhA4ml\\\\nSCLCAZ48zqpffAJihj1tSziA9X2O0e7mm59r8qXNJ6cmEzHGcK2bYi68J+Zbd/6Q\\\\nqUUzQ+5H/2zzDWVxVWROHRL2pqZv80Ysil8ZZA1fxGnYqupeJQ/d6bGSEOLmwT3k\\\\nYwIBIw==\\\\n-----END PUBLIC KEY-----\\\", \\\"fingerprint\\\": \\\"2c146010c5c2da25d4367d18be464ddc65d8bed9\\\"}}, \\\"type\\\": \\\"reactivation\\\", \\\"application_id\\\": \\\"ee9014563558f17e97eb37ac09941c17\\\", \\\"timestamp\\\": 1438737102, \\\"clef_id\\\": \\\"8c287fdc5ffc497c8327f6ac6a1f098d\\\"}\",\"signatures\":{\"confirmation\":{\"signature\":\"PsUVt6q6Jh/iSSzuE8JExkN29E0VXWTQ9xihqzSlsZhHVgfKESXJhws83fFJZd4ysuZuSzDlsjPE3gpv/+CUAaglPakTuWHTGdnuQUO7iSUz64xyZg4ljuQj5xPNCprNeVEZ8gxzupipWXNqTMPzoUp9v/WncMB2QPdcuhzWaxAoy0RXefLVKevylC9/jHfIfaXy0BvOeCaEtFUOl1+4sCnr6y2b6Gf9e13XdjprlqcyTlBvLHCsEBcMfBG3pOwM5L4FwG+4AZvdHJ6ktKt9fknB3LEyON5VRwHduKvDe4P7Xy67ZRiFwoBrXPKbBrF/zxeXiWcGkkBLIEFckfegrQ==\",\"type\":\"rsa-sha256\"},\"initiation\":{\"signature\":\"ZJpAvpPUAN2lHZWJ0MMOl6XMN+S4V0lpkUsMB9KhtQ91+p8JVvFabYqPaqeCRgnUnI4Ojzfku0oOiE2z0OsVeUod9de7I+j+p/OcTIwm9gr7nIlacauuOeei3bhpnz2ocah+mNXyOGX6q6Db6W8yjkgkYQnxVp7XE68a2TO/oh6cAUmglTsT3eVBIy4VPOJVLv8mJylLvxKUmvnVoomAuQiiIZr2qlTAwaa65wgLeRP8mB2poSxazgsxiffq/EkJc/3Cs1LyBp6rnismZMZcLEqdFIwqGcVXcNArlGo93muqVNYZy++Vy/SqE/adGTteyAHWgyPRuYPeKnGQI//Rlg==\",\"type\":\"rsa-sha256\"}},\"test\":true}"
+
+      http_version: "1.1"
+  recorded_at: Tue, 01 Nov 2011 04:58:44 GMT
+- request:
+    method: get
+    uri: https://clef.io/api/v1/reactivations/badtoken/
+    body:
+      encoding: UTF-8
+      string: ""
+    headers:
+      Accept-Encoding:
+      - identity
+  response:
+    status:
+      code: 400
+      message: Bad Request
+    headers:
+      Content-Type:
+      - application/json;charset=utf-8
+      Content-Length:
+      - "2151"
+    body:
+      encoding: UTF-8
+      string: "{\"error\":\"missing_data\",\"message\":\"Bad payload request\"}"
+      http_version: "1.1"
+  recorded_at: Tue, 01 Nov 2011 04:58:44 GMT
+

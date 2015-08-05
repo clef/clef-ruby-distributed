@@ -3,6 +3,7 @@ Bundler.setup
 
 require 'rspec'
 require 'webmock/rspec'
+require 'vcr'
 
 require 'clef'
 
@@ -17,3 +18,5 @@ RSpec.configure do |config|
 
   config.order = 'random'
 end
+
+require 'support/vcr'

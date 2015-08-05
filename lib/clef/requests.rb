@@ -2,6 +2,7 @@ require 'faraday'
 require 'faraday_middleware'
 require 'json'
 require 'active_support/concern'
+require_relative 'middleware/raise_error'
 
 module Clef
   module Requests
@@ -13,7 +14,7 @@ module Clef
 
     def connection
       @connection ||= Faraday.new api_endpoint, connection_options do |conn|
-        conn.use Faraday::Response::RaiseError
+        conn.use Clef::Middleware::RaiseError
 
         conn.request :json
         conn.response :json, content_type: /\bjson$/
@@ -24,6 +25,9 @@ module Clef
 
         conn.adapter Faraday.default_adapter
       end
+    end
+
+    def get_reactivation(token)
     end
 
     private

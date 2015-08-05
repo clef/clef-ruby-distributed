@@ -6,18 +6,6 @@ module Clef
   RSA = OpenSSL::PKey::RSA
 
   module Signing
-    def sign_login_payload(payload={})
-      payload[:type] = "login"
-      assert_keys_in_payload!(payload, [:clef_id, :nonce, :redirect_url, :session_id, :type])
-      sign_payload(payload)
-    end
-
-    def sign_reactivation_handshake_payload(payload)
-      payload[:type] = "reactivation_handshake"
-      assert_keys_in_payload!(payload, [:type])
-      sign_payload(payload)
-    end
-
     def sign_payload(payload={})
       payload = symoblize_keys(payload)
 
@@ -39,43 +27,15 @@ module Clef
       })
     end
 
-    def verify_payload!(payload, user_public_key)
-      unless user_public_key.is_a?(RSA)
-        user_public_key = RSA.new(user_public_key)
-      end
+    def verify_reactivation_payload!(payload)
+      assert_payload_hash_valid!(payload)
 
-      assert_signatures_present!(payload)
-
-      payload_hash = SHA256.new.update(payload[:payload_json]).hexdigest
-      hash_is_valid = (payload_hash.present? and payload[:payload_hash].present? and payload_hash == payload[:payload_hash])
-
-      unless hash_is_valid
-        raise Errors::VerificationError, "Invalid payload hash."
-      end
-
-      application_signature_is_valid = @config.keypair.verify(
-        SHA256.new,
-        Base64.strict_decode64(payload[:signatures][:application][:signature]),
-        payload[:payload_json]
-      )
-
-      unless application_signature_is_valid
-        raise Errors::VerificationError, "Invalid application signature."
-      end
-
-      user_signature_is_valid = user_public_key.verify(
-        SHA256.new,
-        Base64.strict_decode64(payload[:signatures][:user][:signature]),
-        payload[:payload_json]
-      )
-
-      unless user_signature_is_valid
-        raise Errors::VerificationError, "Invalid user signature."
-      end
+      assert_signatures_present!(payload, [:initiation, :confirmation])
+      assert_signature_valid!(payload, :initiation, @config.initiation_public_key)
+      assert_signature_valid!(payload, :confirmation, @config.confirmation_public_key)
 
       true
     end
-
 
     private
 
@@ -90,22 +50,39 @@ module Clef
       end
     end
 
-    def assert_signatures_present!(payload)
+    def assert_signatures_present!(payload, signature_types)
       unless payload[:signatures].present?
         raise Errors::VerificationError, "No signatures provided"
       end
 
-      unless payload[:signatures][:application].present? and payload[:signatures][:application][:signature].present?
-        raise Errors::VerificationError, "No application signature provided"
-      end
+      signature_types.map do |type|
+        is_present = payload[:signatures][type].present? and payload[:signatures][type][:signature].present?
 
-      unless payload[:signatures][:user].present? and payload[:signatures][:user][:signature].present?
-        raise Errors::VerificationError, "No user signature provided"
+        unless is_present
+          raise Errors::VerificationError, "No #{type} signature provided"
+        end
       end
     end
 
-    def symoblize_keys(hash)
-      hash.inject({}) { | memo, (k, v) | memo[k.to_sym] = v; memo}
+    def assert_payload_hash_valid!(payload)
+      payload_hash = SHA256.new.update(payload[:payload_json]).hexdigest
+      hash_is_valid = (payload_hash.present? and payload[:payload_hash].present? and payload_hash == payload[:payload_hash])
+
+      unless hash_is_valid
+        raise Errors::VerificationError, "Invalid payload hash."
+      end
+    end
+
+    def assert_signature_valid!(payload, signature_type, public_key)
+      signature_is_valid = public_key.verify(
+        SHA256.new,
+        Base64.strict_decode64(payload[:signatures][signature_type][:signature]),
+        payload[:payload_json]
+      )
+
+      unless signature_is_valid
+        raise Errors::VerificationError, "Invalid #{signature_type} signature."
+      end
     end
 
     def sort_hash(h)
