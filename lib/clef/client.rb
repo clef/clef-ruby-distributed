@@ -43,7 +43,7 @@ module Clef
       signed_reactivation_hanshake_payload = sign_reactivation_handshake_payload(reactivation_handshake_payload)
       encoded_reactivation_handshake_payload = Clef.encode_payload(signed_reactivation_hanshake_payload)
 
-      response =  get("reactivations/#{token}/", {}, {"Authorization" => "Payload #{encoded_reactivation_handshake_payload}"} )
+      response =  get("reactivations/#{token}", {}, {"Authorization" => "Payload #{encoded_reactivation_handshake_payload}"} )
       reactivation_payload = symoblize_keys(response.body)
 
       verify_reactivation_payload!(reactivation_payload)
