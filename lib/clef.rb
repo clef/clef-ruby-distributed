@@ -1,6 +1,7 @@
 require 'active_support'
 require 'active_support/core_ext'
 
+require 'clef/version'
 require 'clef/errors'
 require 'clef/configuration'
 require 'clef/requests'
