@@ -48,7 +48,12 @@ module Clef
 
       verify_reactivation_payload!(reactivation_payload)
 
-      JSON.parse reactivation_payload[:payload_json], symbolize_names: true
+      payload = JSON.parse reactivation_payload[:payload_json], symbolize_names: true
+      if reactivation_payload.has_key?(:test)
+        payload[:test] = reactivation_payload[:test]
+      end
+
+      payload
     end
 
     def encode_payload(payload)
