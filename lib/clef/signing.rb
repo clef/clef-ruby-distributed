@@ -27,12 +27,15 @@ module Clef
       })
     end
 
-    def verify_reactivation_payload!(payload)
+    def verify_reactivation_payload!(payload, options={})
       assert_payload_hash_valid!(payload)
-
-      assert_signatures_present!(payload, [:initiation, :confirmation])
+      assert_signatures_present!(payload, [:initiation])
       assert_signature_valid!(payload, :initiation, @config.initiation_public_key)
-      assert_signature_valid!(payload, :confirmation, @config.confirmation_public_key)
+
+      unless options[:unsafe_do_not_verify_confirmation_signature]
+        assert_signatures_present!(payload, [:confirmation])
+        assert_signature_valid!(payload, :confirmation, @config.confirmation_public_key)
+      end
 
       true
     end
