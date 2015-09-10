@@ -33,8 +33,7 @@ module Clef
       assert_signature_valid!(payload, :initiation, @config.initiation_public_key)
 
       if options[:unsafe_do_not_verify_confirmation_signature]
-        payload_blob = JSON.parse payload[:payload_json], symbolize_names: true
-        assert_test_payload!(payload_blob)
+        assert_test_payload!(payload)
       else
         assert_signatures_present!(payload, [:confirmation])
         assert_signature_valid!(payload, :confirmation, @config.confirmation_public_key)
@@ -57,8 +56,9 @@ module Clef
     end
 
     def assert_test_payload!(payload)
-      raise Errors::InvalidPayloadError, "Missing test in payload." if not payload.key?(:test)
-      raise Errors::VerificationError, "Invalid test payload" if not payload[:test]
+      payload_blob = JSON.parse payload[:payload_json], symbolize_names: true
+      raise Errors::InvalidPayloadError, "Missing test in payload." if not payload_blob.key?(:test)
+      raise Errors::VerificationError, "Invalid test payload" if not payload_blob[:test]
     end
 
     def assert_signatures_present!(payload, signature_types)
