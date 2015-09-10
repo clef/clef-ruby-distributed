@@ -33,7 +33,8 @@ module Clef
       assert_signature_valid!(payload, :initiation, @config.initiation_public_key)
 
       if options[:unsafe_do_not_verify_confirmation_signature]
-        assert_test_payload!(payload)
+        payload_blob = JSON.parse payload[:payload_json], symbolize_names: true
+        assert_test_payload!(payload_blob)
       else
         assert_signatures_present!(payload, [:confirmation])
         assert_signature_valid!(payload, :confirmation, @config.confirmation_public_key)
