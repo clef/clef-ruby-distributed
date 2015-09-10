@@ -32,7 +32,9 @@ module Clef
       assert_signatures_present!(payload, [:initiation])
       assert_signature_valid!(payload, :initiation, @config.initiation_public_key)
 
-      unless options[:unsafe_do_not_verify_confirmation_signature]
+      if options[:unsafe_do_not_verify_confirmation_signature]
+        assert_test_payload!(payload)
+      else
         assert_signatures_present!(payload, [:confirmation])
         assert_signature_valid!(payload, :confirmation, @config.confirmation_public_key)
       end
@@ -51,6 +53,11 @@ module Clef
       keys.map do |key|
         raise Errors::InvalidPayloadError, "Missing #{key} in payload." if payload[key].nil?
       end
+    end
+
+    def assert_test_payload!(payload)
+      raise Errors::InvalidPayloadError, "Missing test in payload." if not payload.key?(:test)
+      raise Errors::VerificationError, "Invalid test payload" if not payload[:test]
     end
 
     def assert_signatures_present!(payload, signature_types)

@@ -38,14 +38,14 @@ module Clef
       true
     end
 
-    def get_reactivation_payload(token)
+    def get_reactivation_payload(token, options={})
       reactivation_handshake_payload = { reactivation_token: token }
       signed_reactivation_handshake_payload = sign_reactivation_handshake_payload(reactivation_handshake_payload)
       encoded_reactivation_handshake_payload = Clef.encode_payload(signed_reactivation_handshake_payload)
 
       response =  get("reactivations/#{token}", {}, {"Authorization" => "Payload #{encoded_reactivation_handshake_payload}"} )
       reactivation_payload = symoblize_keys(response.body)
-      options = { unsafe_do_not_verify_confirmation_signature: reactivation_payload.key?(:test) and reactivation_payload[:test] }
+
       verify_reactivation_payload!(reactivation_payload, options)
 
       payload = JSON.parse reactivation_payload[:payload_json], symbolize_names: true
