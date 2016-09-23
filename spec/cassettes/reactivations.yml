@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: get
-    uri: https://clef.io/api/v1/reactivations/123456/
+    uri: https://clef.io/api/v1/reactivations/123456
     body:
       encoding: UTF-8
       string: ""
@@ -26,7 +26,7 @@ http_interactions:
   recorded_at: Tue, 01 Nov 2011 04:58:44 GMT
 - request:
     method: get
-    uri: https://clef.io/api/v1/reactivations/badtoken/
+    uri: https://clef.io/api/v1/reactivations/badtoken
     body:
       encoding: UTF-8
       string: ""

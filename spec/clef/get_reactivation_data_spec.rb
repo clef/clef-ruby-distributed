@@ -5,6 +5,7 @@ RSpec.describe Clef, '#get_reactivation_data' do
     token = "123456"
 
     VCR.use_cassette("reactivations") do
+      allow(Clef.client).to receive(:verify_reactivation_payload!).and_return(true)
       payload = Clef.get_reactivation_payload(token)
     end
   end
